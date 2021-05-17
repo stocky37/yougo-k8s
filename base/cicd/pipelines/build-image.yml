@@ -34,7 +34,7 @@ spec:
 
     - name: registry
       type: string
-      desacription: Container registry to use; up to, but not including, the base image name
+      description: Container registry to use; up to, but not including, the base image name
       default: image-registry.openshift-image-registry.svc:5000/yougo-cicd
   tasks:
     - name: clone

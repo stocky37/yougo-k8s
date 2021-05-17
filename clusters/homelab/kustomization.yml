@@ -3,3 +3,4 @@ kind: Kustomization
 namespace: yougo-cicd
 resources:
 - ../../base
+- sync.yml

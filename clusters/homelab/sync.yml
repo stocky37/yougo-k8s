@@ -1,0 +1,24 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta1
+kind: GitRepository
+metadata:
+  name: yougo
+spec:
+  interval: 1m0s
+  ref:
+    branch: main
+  url: https://github.com/yougo-app/yougo-k8s.git
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1beta1
+kind: Kustomization
+metadata:
+  name: yougo
+spec:
+  interval: 10m0s
+  path: clusters/homelab
+  prune: true
+  serviceAccountName: yougo-team
+  sourceRef:
+    name: yougo
+    kind: GitRepository
+  validation: client
