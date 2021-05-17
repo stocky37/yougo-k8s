@@ -1,0 +1,9 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: yougo-cicd
+resources:
+- cicd/pipelines/build-image.yml
+- flux/yougo-api/sync-dev.yml
+- flux/yougo-api/sync-prod.yml
+- flux/yougo-ui/sync-dev.yml
+- flux/yougo-ui/sync-prod.yml

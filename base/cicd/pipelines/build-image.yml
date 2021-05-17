@@ -1,0 +1,68 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: build-image
+spec:
+  workspaces:
+    - name: source
+
+  params:
+    - name: git-url
+      type: string
+      description: git url to clone
+      default: https://github.com/stocky37/yougo-api.git
+
+    - name: git-revision
+      type: string
+      description: git revision to checkout (branch, tag, sha, ref…)
+      default: main
+
+    - name: app-name
+      type: string
+      description: application name
+      default: yougo-api
+
+    - name: tag
+      type: string
+      description: image tag to build
+      default: latest
+
+    - name: dockerfile
+      type: string
+      description: path to the Dockerfile
+      default: src/main/docker/Dockerfile.jvm-multi
+
+    - name: registry
+      type: string
+      desacription: Container registry to use; up to, but not including, the base image name
+      default: image-registry.openshift-image-registry.svc:5000/yougo-cicd
+  tasks:
+    - name: clone
+      taskRef:
+        name: git-clone
+        kind: ClusterTask
+      workspaces:
+        - name: output
+          workspace: source
+      params:
+        - name: url
+          value: $(params.git-url)
+        - name: deleteExisting
+          value: 'true'
+
+    - name: buildah
+      taskRef:
+        name: buildah
+        kind: ClusterTask
+      runAfter:
+        - clone
+      workspaces:
+        - name: source
+          workspace: source
+      params:
+        - name: IMAGE
+          value: $(params.registry)/$(params.app-name):$(params.tag)
+        - name: DOCKERFILE
+          value: $(params.dockerfile)
+        - name: TLSVERIFY
+          value: 'false'
